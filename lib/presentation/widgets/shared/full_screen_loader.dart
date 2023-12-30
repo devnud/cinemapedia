@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 class FullScreenLoader extends StatelessWidget {
   const FullScreenLoader({super.key});
 
-  Stream<String> getLoadingMessage()  {
+  Stream<String> getLoadingMessage() {
     final messages = <String>[
-    'Cargarndo peliculas...',
-    'Comprando palomitas de maíz',
-    'Cargando populares',
-    'Ya mismo',
-    'Esto esta tardando mucho :)',
-  ];
+      'Cargarndo peliculas...',
+      'Comprando palomitas de maíz',
+      'Cargando populares',
+      'Llamando a mi esposa',
+      'Ya mismo',
+      'Esto esta tardando mucho :)',
+    ];
 
     return Stream.periodic(const Duration(milliseconds: 1200), (step) {
       return messages[step];
@@ -32,7 +33,8 @@ class FullScreenLoader extends StatelessWidget {
           StreamBuilder(
             stream: getLoadingMessage(),
             builder: (context, snapshot) {
-              return Text(snapshot.data ?? '');
+              if (!snapshot.hasData) return const Text('Cargando...');
+              return Text(snapshot.data!);
             },
           ),
         ],
