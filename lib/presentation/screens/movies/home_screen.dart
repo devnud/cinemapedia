@@ -44,6 +44,8 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     final topRatesMovies = ref.watch(topRatedMoviesProvider);
     final upcomingMovies = ref.watch(upcomingMoviesProvider);
 
+    return const FullScreenLoader();
+
     return CustomScrollView(
       slivers: [
         const SliverAppBar(
