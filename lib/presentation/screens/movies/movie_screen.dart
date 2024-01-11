@@ -42,7 +42,11 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
         physics: const ClampingScrollPhysics(),
         slivers: [
           _CustomSliverAppBar(movie: movie),
-          _CustomSliverList(movie: movie),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                (_, index) => _MovieDetails(movie: movie),
+                childCount: 1),
+          ),
         ],
       ),
     );
@@ -71,21 +75,21 @@ class _CustomSliverAppBar extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [
-                      0.7,
-                      1.0,
-                    ],
-                    colors: [Colors.transparent, Colors.black87],
-                  ),
-                ),
-              ),
-            ),
+            // const SizedBox.expand(
+            //   child: DecoratedBox(
+            //     decoration: BoxDecoration(
+            //       gradient: LinearGradient(
+            //         begin: Alignment.topCenter,
+            //         end: Alignment.bottomCenter,
+            //         stops: [
+            //           0.7,
+            //           1.0,
+            //         ],
+            //         colors: [Colors.transparent, Colors.black87],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox.expand(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -104,32 +108,72 @@ class _CustomSliverAppBar extends StatelessWidget {
   }
 }
 
-class _CustomSliverList extends StatelessWidget {
+class _MovieDetails extends StatelessWidget {
   final Movie movie;
 
-  const _CustomSliverList({required this.movie});
+  const _MovieDetails({required this.movie});
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  movie.title,
-                  style: const TextStyle(fontSize: 20),
-                  textAlign: TextAlign.start,
+    final size = MediaQuery.of(context).size;
+    final textStyle = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Imagen
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  movie.posterPath,
+                  width: size.width * 0.3,
                 ),
-                const SizedBox(height: 8),
-                Text(movie.overview),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+
+              // Descripción
+              SizedBox(
+                width: (size.width - 40) * 0.7,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(movie.title, style: textStyle.titleLarge),
+                    Text(movie.overview),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        // Generos de la pelicula
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Wrap(
+            children: [
+              ...movie.genreIds.map(
+                (genre) => Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Chip(
+                    label: Text(genre),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Todo: Agregar actores
+
+        const SizedBox(height: 30),
+      ],
     );
   }
 }
